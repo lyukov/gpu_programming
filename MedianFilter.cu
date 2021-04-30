@@ -11,6 +11,7 @@ __global__ void medianKernel(
         int width
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
+    if (x >= width) { return; }
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int ch = blockIdx.z * blockDim.z + threadIdx.z;
     int radius = WIN_SIZE / 2;
@@ -58,8 +59,8 @@ void MedianFilterCUDA(
 
     cudaMemcpy(devInputImage, inputImage, imageSizeInBytes, cudaMemcpyHostToDevice);
 
-    dim3 gridSize(1, height, channels);
-    dim3 blockSize(width, 1, 1);
+    int blockSize = min(1024, width);
+    dim3 gridSize((width + blockSize - 1) / blockSize, height, channels);
     CudaTimer kernelTimer = CudaTimer();
     SAFE_KERNEL_CALL((
         medianKernel <<<gridSize, blockSize>>> (

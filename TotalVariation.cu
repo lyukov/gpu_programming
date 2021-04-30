@@ -10,10 +10,11 @@ __global__ void differenceKernel(
         double lambda1, double lambda2
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
+    if (x >= width) { return; }
     int y = blockIdx.y * blockDim.y + threadIdx.y;
     int ch = blockIdx.z * blockDim.z + threadIdx.z;
     int idx = y * width * channels + x * channels + ch;
-    int difference = 0;
+    double difference = 0;
     double center = (double)image[idx];
     if (x > 0 && x < width - 1) {
         double plusX = (double)image[idx + channels];
@@ -49,8 +50,8 @@ double TotalGeneralizedVariationCUDA(
 
     cudaMemcpy(devInputImage, image, imageSizeInBytes, cudaMemcpyHostToDevice);
 
-    dim3 gridSize(width, height);
-    dim3 blockSize(1, 1, channels);
+    int blockSize = min(1024, width);
+    dim3 gridSize((width + blockSize - 1) / blockSize, height, channels);
     CudaTimer kernelTimer = CudaTimer();
     SAFE_KERNEL_CALL((
         differenceKernel <<<gridSize, blockSize>>> (

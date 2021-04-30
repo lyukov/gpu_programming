@@ -80,9 +80,9 @@ void totalVariationExperiment() {
 }
 
 int main() {
-    medianFilterExperiment();
-    cout << endl;
     totalVariationExperiment();
+    cout << endl;
+    medianFilterExperiment();
     system("pause");
     return 0;
 }
