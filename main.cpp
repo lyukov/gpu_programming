@@ -1,26 +1,27 @@
-// This Program is Written by Abubakr Shafique (abubakr.shafique@gmail.com)
 #include <iostream>
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "Inversion_CUDA.h"
-#include "Median_Filter_CUDA.h"
-
-using namespace std;
-using namespace cv;
+#include "MedianFilter.h"
 
 int main(){
-	Mat image = imread("Test_Image.png");
+    cv::Mat image = cv::imread("Test_Image.png");
 
-	cout << "Height: " << image.rows 
-		<< ", Width: " << image.cols 
-		<< ", Channels: " << image.channels()
-		<< endl;
+    cout << "Height: " << image.rows 
+        << ", Width: " << image.cols 
+        << ", Channels: " << image.channels()
+        << endl;
 
-	Median_Filter_CUDA(image.data, image.rows, image.cols, image.channels());
+    cv::Mat outputImage(image);
+    double elapsed, kernelElapsed;
+    MedianFilterCUDA(image.data, outputImage.data, image.rows, image.cols, image.channels(), elapsed, kernelElapsed);
 
-	imwrite("Median_Image.png", image);
+    cout << "All GPU time: " << elapsed << endl
+        << "Kernel time: " << kernelElapsed << endl
+        << "Copy time: " << elapsed - kernelElapsed << endl;
 
-	return 0;
+    cv::imwrite("Median_Image.png", outputImage);
+    system("pause");
+    return 0;
 }
