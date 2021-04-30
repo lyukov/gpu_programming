@@ -1,5 +1,4 @@
 #include "CudaTimer.h"
-#include "device_launch_parameters.h"
 
 CudaTimer::CudaTimer() {
     cudaEventCreate(&startEvent);

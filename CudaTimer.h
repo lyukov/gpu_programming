@@ -1,5 +1,5 @@
 #pragma once
-#include "cuda_runtime.h"
+#include "CudaUtils.cuh"
 
 class CudaTimer {
     cudaEvent_t startEvent;
