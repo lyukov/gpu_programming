@@ -57,13 +57,14 @@ void MedianFilterCUDA(
     cudaMalloc((void**)&devOutputImage, imageSizeInBytes);
 
     cudaMemcpy(devInputImage, inputImage, imageSizeInBytes, cudaMemcpyHostToDevice);
-    //cudaMemcpy(devOutputImage, devInputImage, imageSizeInBytes, cudaMemcpyDeviceToDevice);
 
     dim3 gridSize(width, height);
     dim3 blockSize(1, 1, channels);
     CudaTimer kernelTimer = CudaTimer();
     SAFE_KERNEL_CALL((
-        medianKernel <<<gridSize, blockSize>>> (devInputImage, devOutputImage, channels, height, width)
+        medianKernel <<<gridSize, blockSize>>> (
+            devInputImage, devOutputImage, channels, height, width
+        )
     ));
     kernelElapsed = kernelTimer.stop();
 

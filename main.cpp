@@ -5,6 +5,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "MedianFilter.h"
+#include "TotalVariation.h"
 
 void medianFilterExperiment() {
     cv::Mat image = cv::imread("Test_Image.png");
