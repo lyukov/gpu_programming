@@ -14,24 +14,19 @@ __global__ void differenceKernel(
     int ch = blockIdx.z * blockDim.z + threadIdx.z;
     int idx = y * width * channels + x * channels + ch;
     int difference = 0;
+    double center = (double)image[idx];
     if (x > 0 && x < width - 1) {
-        difference += lambda1 * abs(
-            (double)image[idx + channels] - (double)image[idx]
-        ) + lambda2 * abs(
-            (double)image[idx - channels] 
-                - 2.0 * (double)image[idx] 
-                + (double)image[idx + channels]
-        );
+        double plusX = (double)image[idx + channels];
+        double minusX = (double)image[idx - channels];
+        difference += lambda1 * abs(plusX - center)
+            + lambda2 * abs(minusX - 2.0 * center + plusX);
     }
     if (y > 0 && y < height - 1) {
         int yShift = width * channels;
-        difference += lambda1 * abs(
-            (double)image[idx + yShift] - (double)image[idx]
-        ) + lambda2 * abs(
-            (double)image[idx - yShift]
-            - 2.0 * (double)image[idx]
-            + (double)image[idx + yShift]
-        );
+        double plusY = (double)image[idx + yShift];
+        double minusY = (double)image[idx - yShift];
+        difference += lambda1 * abs(plusY - center)
+            + lambda2 * abs(minusY - 2.0 * center + plusY);
     }
     diff[idx] = difference;
 }
